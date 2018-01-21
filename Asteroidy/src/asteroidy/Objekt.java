@@ -17,31 +17,44 @@ import java.awt.Point;
 abstract class Objekt {
     protected Point point;
     protected Color color;
+    protected int speed;
     protected boolean fill;
-    protected int vc; //velocity
     protected boolean active = true;
+    protected int damage = 1;
+    
     
             
-    public Objekt(int x, int y, boolean fill) {
+    public Objekt(int x, int y) {
         this.point = new Point(x, y);
         this.color = new Color(255, 0, 255);
         this.fill = fill;
-        this.vc = 5;
+        this.speed = 5;
+        this.color = new Color(0,255,0);
         
     }
-   /* public boolean setActive(int curX,int curY){
-        if(this.detect(curX, curY)){
-            this.active = true;
-        }
-        else{
-            this.active = false;
-        }
-        return this.active;
-    }*/
     
-    abstract public void setSize(int size);
+    public Point getPoint() {
+        return point;
+    }
+    
+    public void die(){
+        this.active = false;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+    
+    public int getDamage() {
+        return damage;
+    }
+   
+    
+    abstract public void setSpeed(int speed);
+    abstract public int getSpeed();
+    abstract public boolean detect(int x, int y);
     abstract public void paint(Graphics g);
     abstract public void animate(Platno p);
-    abstract public void setVC(int vc);
-    abstract public boolean detect(int curX, int curY);
+    abstract public void setSize(int size);
+    abstract public int getSize();
 }

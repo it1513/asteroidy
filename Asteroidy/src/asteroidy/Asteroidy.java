@@ -21,7 +21,7 @@ import javax.swing.border.EmptyBorder;
  * @author student
  */
 public class Asteroidy {
-    private JFrame window;
+    private static JFrame window;
     private JButton drawButton;
     private JLabel headLabel;
     private Platno platno;
@@ -37,9 +37,9 @@ public class Asteroidy {
         Font font = new Font("Arial", style , 20);
         headLabel.setFont(font);
         // Nastavení barvy pozadí a písma
-        headLabel.setBackground(Color.blue);
+        headLabel.setBackground(Color.black);
         headLabel.setOpaque(true);
-        headLabel.setForeground(Color.white);
+        headLabel.setForeground(Color.green);
         // Nastavení zarovnání a odsazení
         headLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         headLabel.setHorizontalAlignment(JLabel.CENTER);        
@@ -61,8 +61,16 @@ public class Asteroidy {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         new Asteroidy("asteroidy", 800, 600);
+         new Asteroidy("asteroidy", 1000, 500);
         
+    }
+    
+    public static int getHeight() {
+    	return window.getHeight();
+    }
+    
+    public static int getWidth() {
+    	return window.getWidth();
     }
     
 }
