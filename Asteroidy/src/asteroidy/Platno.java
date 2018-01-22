@@ -28,46 +28,57 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.Timer;
-
 /**
  *
  * @author student
  */
-public class Platno extends JComponent implements MouseListener, MouseMotionListener, KeyListener, ActionListener{
-    private Point p = new Point(100,100);
+
+
+@SuppressWarnings("serial")
+public class Platno extends JComponent implements MouseListener, MouseMotionListener, KeyListener, ActionListener { 
+   private Point p = new Point(100,100);
     static ArrayList<Objekt> points;
     static ArrayList<asteroid> asteroids;
     private Timer timer;
-    public Image image;
     public Image ship;
+    public Image space;
     private Rectangle playerRect;
-    public int rectWidth = 80;
-    private float distance = 200f;
+    private float distance = 1f;
     private int kills = 0;
     private int score = 0;
+    public int rectWidth=80;
     private Font myFont = new Font("Aerial", Font.BOLD, 18);
     private Font myFont2 = new Font("Aerial", Font.BOLD, 58);
     public Platno(){
-        this.points = new ArrayList<Objekt>();
-        this.asteroids = new ArrayList<asteroid>();
+    	this.points = new ArrayList<Objekt>();
+    	this.asteroids = new ArrayList<asteroid>();
+        
     }
     
-    public void init() {
-       this.addKeyListener(this);
-        this.setFocusable(true);
+    public void setPoint(int x, int y,boolean fill){
+        p = new Point(x,y);
+        this.points.add(new Projektil(p.x,p.y));
+    }
+    
+    public void createObject(int x, int y,boolean fill){
+    	this.points.add(new Projektil(p.x,p.y));
+    }
+    
+    public void setAxis(int x, int y){
+        
+    }
+    
+    public void init(){
         this.addMouseListener(this);
         this.addMouseMotionListener(this); 
+        this.addKeyListener(this);
+        this.setFocusable(true);
         ship = new ImageIcon(getClass().getResource("ship.png")).getImage().getScaledInstance(80, 80, Image.SCALE_DEFAULT);
+    //    space = new ImageIcon(getClass().getResource("space.jpg")).getImage().getScaledInstance(1000,500, Image.SCALE_DEFAULT);
         this.timer = new Timer(30,this);
-        timer.start();
+        timer.start();   
     }
-    
-    public void drawPoints(Graphics g) {
-        for (Objekt b: this.points) {
-            b.paint(g);
-        }
-    }
-    
+   
     public void drawAxis(Graphics g, Dimension size){
         Graphics2D g2d = (Graphics2D) g;
         float tloustka = 1f;
@@ -81,128 +92,171 @@ public class Platno extends JComponent implements MouseListener, MouseMotionList
         g2d.drawLine(p.x, 0, p.x, size.height);
     }
     
-    public void paint(Graphics g) {
-        g.setColor(Color.white);
-        Dimension size = this.getSize();
-        g.fillRect(0, 0, size.width, size.height);
-    //    drawAxis(g, size);
-    //    drawRectangle(g,size);
-        drawPoints(g);
-        drawCrosshair(g);
-        drawPlayer(g,size);
-        drawAsteroids(g);
-        drawText(g,size);
-    }
-    
-    public static void spawnAsteroid() {
-        Random rand = new Random();
-        int number = rand.nextInt(10);
-        int num = rand.nextInt(2);
-        if(num==1)
-                    asteroids.add(new asteroid(Asteroidy.getWidth(),Asteroidy.getHeight() /number,80,80));
-    	
-    }
-    
-    public void drawText(Graphics g,Dimension size){
-            if(timer.isRunning()){
-            if((int)distance % 200 == 0)
-                this.spawnAsteroid();
-            String str = "light year: " + (int)(distance/2);
-            score = (int)distance + kills * 200;
-            String str2 = "Score: " + score;
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setFont(myFont);
-            g2.setColor(Color.green);
-            g2.drawString(str, size.width-170, size.height-60);
-            g2.drawString(str2, size.width-170, size.height-40);
-            }
-    }
-    
- /*   public void drawRectangle(Graphics g, Dimension size) {
-        Graphics2D g2d = (Graphics2D)g;
-        g2d.setColor(Color.blue);
-        g2d.fill(new Rectangle2D.Double(200, 200,30,30));        
-                
-    }
-    */
-    
     public void drawPlayer(Graphics g,Dimension size){
         if(timer.isRunning()){
         Graphics2D g2 = (Graphics2D) g;
         float tloustka = 3f;
-      //  int rectwidth=80;
-        int rectheight=80;
+        
+        int rectHeight=40;
         BasicStroke stroke = new BasicStroke(tloustka,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER);
         g2.setStroke(stroke);
         g2.setColor(Color.blue);
-     //  playerRect = new Rectangle(size.width/20,p.y-(rectheight/2),rectwidth,rectheight);
-     //   g2.draw(playerRect);
-        g2.drawImage(ship,size.width/20,p.y-(rectheight/2),null);
+        playerRect = new Rectangle(40,p.y-(rectHeight/2),rectWidth,rectHeight);
+        g2.draw(playerRect);
+        g2.drawImage(ship,40,p.y-rectHeight,null);
         }
     }
     
-    public void setPoint(int x, int y, boolean fill) {
-        p = new Point(x,y);
-        this.points.add(new Projektil(p.x,p.y));
-        
-    }
-    
-    public void drawCrosshair(Graphics g){
-       // if(timer.isRunning()){
+     public void drawCrosshair(Graphics g){
+        if(timer.isRunning()){
             Graphics2D g2 = (Graphics2D) g;
             float tloustka = 2f;
             int crossW=30;
             int crossH=30;
             BasicStroke stroke = new BasicStroke(tloustka,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER);
             g2.setStroke(stroke);
-            g2.setColor(Color.red);
+            g2.setColor(Color.green);
             //g2d.drawLine(0, p.y, size.width, p.y);
             //g2d.drawLine(p.x, 0, p.x, size.height);
             g2.draw(new Rectangle2D.Double(p.x-crossW/2,p.y,crossW,0));
             g2.draw(new Rectangle2D.Double(p.x,p.y-crossH/2,0,crossH));
-       // }
+        }
+    }
+     
+    public void drawText(Graphics g,Dimension size){
+        if(timer.isRunning()){
+            if((int)distance % 30 == 0)
+              //  this.spawnRndEnemyLine();
+                this.spawnAsteroid();
+            String str = "Kills: " + kills;
+            score = (int)distance + kills * 150;
+            String str2 = "Score: " + score;
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setFont(myFont);
+            g2.setColor(Color.green);
+            g2.drawString(str, size.width-170, size.height-80);
+            g2.drawString(str2, size.width-170, size.height-60);
+        }
+    }
+    /*
+    public static void spawnAsteroid() {
+        Random rand = new Random();
+        int number = rand.nextInt(10);
+        int num = rand.nextInt(2);
+        if(num==1)
+                    enemies.add(new EnemyPlane1(Asteroidy.getWidth(),Asteroidy.getHeight() /number));
+    	
+    }
+    */
+    
+    public static void spawnAsteroid() {
+        Random rand = new Random();
+        int count = 6;
+        int spawn = 0;
+    	for(int i = 0; i < count; i++) {         
+                int num = rand.nextInt(2);
+                if(num==1 && spawn == 0){
+                    asteroids.add(new asterojd(Asteroidy.getWidth()-100,(Asteroidy.getHeight()/7) *i ));
+                    spawn=1;
+                }
+    	}
+        spawn =0;
+    	
     }
     
-    public void drawAsteroids(Graphics g){
+    public void drawPoints(Graphics g){
+        for(Objekt o: this.points){
+            o.paint(g);
+        }
+    }
+    
+    public void drawEnemies(Graphics g){
         for(asteroid a: this.asteroids){
             a.paint(g);
         }
     }
+
+    
+    public void drawEndGame(Graphics g,Dimension size){
+        if(!timer.isRunning()){
+            String str = "Score: " + score;
+            String str2 = "GAME OVER";
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setFont(myFont2);
+            g2.setColor(Color.red);     
+            g2.drawString(str, size.width/2 -120, 290);
+            g2.drawString(str2, size.width/2 -120, 220);
+        }
+    }
     
     
+    public void paint(Graphics g){   
+        g.setColor(Color.black);   
+        g.drawImage(space, 0, 0, null);
+        Dimension size = this.getSize();
+        g.fillRect(0, 0, size.width, size.height);
+
+        drawPlayer(g,size);
+        drawCrosshair(g);
+        drawText(g,size);
+        drawPoints(g);
+        drawEnemies(g);
+       // drawEndGame(g,size);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent me) {
+        System.out.println(me.getButton());
+        if (me.getButton() == 1) {
+            this.setPoint(this.rectWidth + 40,me.getY(),true);
+        }
+        this.repaint();
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent me) {
+        
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent me) {
+        p.x = me.getX();
+        p.y = me.getY();
+        this.repaint();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent me) {
+        //System.out.println("x:"+me.getX()+" y:"+me.getY());
+        p.x = me.getX();
+        p.y = me.getY();
+        this.repaint();
+    }
     @Override
     public void keyTyped(KeyEvent ke) {
-       
+        
     }
 
     @Override
     public void keyPressed(KeyEvent ke) {
-    /*    Objekt b = actObj;
         switch(ke.getKeyCode()){
-            case KeyEvent.VK_LEFT:
-                System.out.println("Vlevo");
-                b.point.x--;
-                p.x--;
-                break;
-            case KeyEvent.VK_RIGHT:
-                System.out.println("Vpravo");
-                b.point.x++;
-                p.x++;
-                break;
-            case KeyEvent.VK_UP:
-                System.out.println("Nahoru");
-                b.point.y--;
-                p.y--;
-                break;
-            case KeyEvent.VK_DOWN:
-                System.out.println("Dolu");
-                p.y++;
-                b.point.y++;
-                break;
-               
         }
-        this.repaint();
-        */
     }
 
     @Override
@@ -212,7 +266,7 @@ public class Platno extends JComponent implements MouseListener, MouseMotionList
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        
+       
         Iterator<Objekt> objIt;
         Iterator<asteroid> astIt = this.asteroids.iterator();
         
@@ -228,10 +282,8 @@ public class Platno extends JComponent implements MouseListener, MouseMotionList
                     if(a.detectCollision(o.getPoint(), o.getSize())){
                         a.hurt(o.getDamage());
                         o.die();
-                        if(a.getHealth() <= 0){
                             a.die();
                             kills++;
-                        }
                     }
                 }
                 a.animate();
@@ -252,55 +304,19 @@ public class Platno extends JComponent implements MouseListener, MouseMotionList
                 o.animate(this);
             }   
         }     
-        
+        distance++;
         this.repaint();
     }
     
-    @Override
-    public void mouseClicked(MouseEvent me) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent me) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent me) {
-        System.out.println(me.getButton());
-        if (me.getButton() == 1) {
-            this.setPoint(this.rectWidth + 40,me.getY(),true);
-        }
-      /*  if (me.getButton() == 2) {
-            this.setPoint(me.getX(),this.getHeight()-70,false);
-        }*/
-        this.repaint();
-        
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent me) {
-        
-    }
-
-    @Override
-    public void mouseExited(MouseEvent me) {
-       
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent me) {
-        p.x = me.getX();
-        p.y = me.getY();
-        this.repaint();
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent me) {
-        p.x = me.getX();
-        p.y = me.getY();
-        this.repaint();
+    public static void spawnRndEnemyLine() {
+        Random rand = new Random();
+        int count = 9;
+    	for(int i = 0; i < count; i++) {         
+                int num = rand.nextInt(2);
+                if(num==1)
+                    asteroids.add(new asterojd(((Asteroidy.getWidth() / count) * i) + (Asteroidy.getWidth() / count) / 2 - 40, -40));
+    	}
+    	
     }
     
 }
